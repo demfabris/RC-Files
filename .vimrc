@@ -15,8 +15,13 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'ap/vim-css-color'
 Plug 'edkolev/tmuxline.vim'
 Plug 'HerringtonDarkholme/yats.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'stsewd/fzf-checkout.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 call plug#end()
 
 " ############################## PYTHON ########################################
@@ -59,6 +64,18 @@ noremap <Leader>c "+y
 noremap <Leader>v "+p
 set clipboard=unnamedplus
 
+" ############################## FZF ###############################################
+
+nnoremap <silent> <Space>f :Files<CR>
+nnoremap <silent> <Space>w :Ag<CR>
+
+let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
+
+let $FZF_DEFAULT_OPTS='--reverse'
+let $BAT_THEME='base16'
+
+nnoremap <Space>g :GBranches<CR>
+
 " ############################## AIRLINE/TMUX ######################################
 
 " Airline stuff
@@ -70,13 +87,51 @@ let airline#extensions#tmuxline#snapshot_file = "~/.tmux-status.conf"
 let g:airline_theme='gruvbox'
 let g:airline_powerline_fonts = 1
 " Tmuxline layout
-let g:tmuxline_preset = 'full'
+let g:tmuxline_preset = {
+      \'a'    : ['#S', '#W'],
+      \'b'    : '﨟#(uptime | cut -d " " -f 4 | sed "s/\,//g") Up',
+      \'c'    : ' #(whoami)',
+      \'win'  : ['#I', '#W'],
+      \'cwin' : ['#I', '#W'],
+      \'x'    : '#(ps a | wc -l)  ',
+      \'y'    : ["#(free -m | awk 'FNR==2 {print $3}') MiB", "#(free -m | awk 'FNR==2 {print $2}') MiB  "],
+      \'z'    : "#H  "}
 
 " Tmux color stuff
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set background=dark
 set termguicolors
+
+" ############################# SNIPPETS ###########################################
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for select text for visual placeholder of snippet.
+vmap <C-j> <Plug>(coc-snippets-select)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+
 
 " ############################## AUTOCOMPLETION #####################################
 " TextEdit might fail if hidden is not set.
@@ -88,7 +143,7 @@ set nowritebackup
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=200
+set updatetime=100
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -200,7 +255,7 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}%{ObsessionStatus()} 
 let g:airline#extensions#coc#enabled = 1
 
 " Mappings using CoCList:
@@ -222,8 +277,6 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 " Renaming
 nmap <leader>rr <Plug>(coc-rename)
-" Project wide search
-nnoremap <leader>prw : CocSearch <C-R>=expand("<cword>")<CR><CR>
 
 " Status line integration
 set statusline^=%{coc#status()}
@@ -241,15 +294,14 @@ let g:prettier#autoformat_require_pragma = 0
 vnoremap < <gv
 vnoremap > >gv
 
-
 " Settings
 set nocompatible
 set number
 set encoding=utf-8
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set textwidth=79
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set textwidth=85
 set expandtab
 set autoindent
 set fileformat=unix
@@ -257,4 +309,3 @@ set mouse=a
 set nomodeline
 syntax on
 colorscheme gruvbox
-

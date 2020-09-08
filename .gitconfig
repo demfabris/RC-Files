@@ -1,0 +1,10 @@
+[user]
+    email = fabriciodematte7p@gmail.com
+    username = fabricio7p
+	name = Fabricio Dematte
+[credential]
+	helper = store
+[core]
+    editor = vim
+[alias]
+    s = !git status
