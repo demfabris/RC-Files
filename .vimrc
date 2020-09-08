@@ -89,7 +89,7 @@ let g:airline_powerline_fonts = 1
 " Tmuxline layout
 let g:tmuxline_preset = {
       \'a'    : ['#S', '#W'],
-      \'b'    : '﨟#(uptime | cut -d " " -f 4 | sed "s/\,//g") Up',
+      \'b'    : '﨟 #(uptime -p)',
       \'c'    : ' #(whoami)',
       \'win'  : ['#I', '#W'],
       \'cwin' : ['#I', '#W'],

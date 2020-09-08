@@ -64,6 +64,13 @@ alias autoremove="sudo pacman -Rsn $(pacman -Qdtq)";
 alias trab="cd ~/Documents/Projects/Development ; ll";
 alias tst="cd ~/Documents/Projects/Testing ; ll"; 
 
+# Show all available colors
+function term256colors () {
+  for i in {0..255}
+    do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
+  done
+} 
+
 # Git aliases
 alias gl="git log --oneline --decorate --graph --all"
 alias gb="git branch -av"
@@ -99,7 +106,12 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 
 # fzf key bindings
 source /usr/share/fzf/key-bindings.zsh
+export FZF_DEFAULT_COMMAND=ag
 source /usr/share/fzf/completion.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Startx
+[ -z "$DISPLAY" ] && startx
+
