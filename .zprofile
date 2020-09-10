@@ -1,0 +1,2 @@
+# Startx
+[ -z "$DISPLAY" ] && startx

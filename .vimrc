@@ -100,7 +100,6 @@ let g:tmuxline_preset = {
 " Tmux color stuff
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-set background=dark
 set termguicolors
 
 " ############################# SNIPPETS ###########################################
@@ -307,5 +306,7 @@ set autoindent
 set fileformat=unix
 set mouse=a
 set nomodeline
+set background=dark
+
 syntax on
 colorscheme gruvbox
