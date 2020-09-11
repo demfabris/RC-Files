@@ -13,6 +13,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'morhetz/gruvbox'
 Plug 'jiangmiao/auto-pairs'
 Plug 'ap/vim-css-color'
+Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'edkolev/tmuxline.vim'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -88,14 +89,12 @@ let g:airline_theme='gruvbox'
 let g:airline_powerline_fonts = 1
 " Tmuxline layout
 let g:tmuxline_preset = {
-      \'a'    : ['#S', '#W'],
-      \'b'    : '﨟 #(uptime -p)',
-      \'c'    : ' #(whoami)',
+      \'a'    : [' #S'],
+      \'b'    : "﨟 #(uptime | cut -d' ' -f2)",
       \'win'  : ['#I', '#W'],
       \'cwin' : ['#I', '#W'],
-      \'x'    : '#(ps a | wc -l)  ',
-      \'y'    : ["#(free -m | awk 'FNR==2 {print $3}') MiB", "#(free -m | awk 'FNR==2 {print $2}') MiB  "],
-      \'z'    : "#H  "}
+      \'y'    : '#(ps a | wc -l)  ',
+      \'z'    : ["#(free -m | awk 'FNR==2 {print $3}') MiB", "#(free -m | awk 'FNR==2 {print $2}') MiB  "],}
 
 " Tmux color stuff
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
@@ -293,6 +292,16 @@ let g:prettier#autoformat_require_pragma = 0
 vnoremap < <gv
 vnoremap > >gv
 
+" Tmux rename
+augroup tmux
+  autocmd!
+  if exists('$TMUX')
+    autocmd BufReadPost,FileReadPost,BufNewFile,FocusGained * call system("tmux rename-window " . expand("%:t"))
+    autocmd VimLeave,FocusLost * call system("tmux set-window-option automatic-rename")
+  endif
+augroup END
+
+
 " Settings
 set nocompatible
 set number
@@ -307,6 +316,7 @@ set fileformat=unix
 set mouse=a
 set nomodeline
 set background=dark
+set autoread
 
 syntax on
 colorscheme gruvbox
