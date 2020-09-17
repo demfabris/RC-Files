@@ -42,8 +42,9 @@ source $ZSH/oh-my-zsh.sh
 ###### User configuration
 #
 export LANG=pt_BR.UTF-8
-export EDITOR=vim
+export EDITOR=nvim
 export BROWSER=google-chrome-stable
+alias vim="nvim"
 
 autoload -U compinit
 zstyle ':completion:*' menu select
@@ -51,8 +52,8 @@ zmodload zsh/complist
 compinit -d '~/.config/zsh/zcompdump'
 _comp_options+=(globdots)
 
-# Vi mode
-bindkey -v
+# Instant complete menu
+setopt menu_complete
 
 # History
 HISTSIZE=10000
@@ -63,6 +64,7 @@ HISTFILE=~/.config/zsh/histfile
 alias autoremove="sudo pacman -Rsn $(pacman -Qdtq)";
 alias trab="cd ~/Documents/Projects/Development ; ll";
 alias tst="cd ~/Documents/Projects/Testing ; ll"; 
+
 
 # Show all available colors
 function term256colors () {
@@ -101,12 +103,12 @@ fi
 
 
 # Syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \ 
-2>/dev/null
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# 2>/dev/null
 
 # fzf key bindings
 source /usr/share/fzf/key-bindings.zsh
-export FZF_DEFAULT_COMMAND=ag
+# export FZF_DEFAULT_COMMAND=ag
 source /usr/share/fzf/completion.zsh
 
 

@@ -1,0 +1,8 @@
+{
+  "coc.preferences.formatOnSaveFiletypes": [
+    "*"
+  ],
+  "eslint.autoFixOnSave": true,
+  "python.jediEnabled": false,
+  "python.formatting.provider": "black"
+}

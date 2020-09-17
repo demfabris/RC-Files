@@ -5,6 +5,7 @@ Plug 'nvie/vim-flake8'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-commentary'
+Plug 'airblade/vim-rooter'
 Plug 'tpope/vim-fugitive'
 Plug 'sheerun/vim-polyglot'
 Plug 'mattn/emmet-vim'
@@ -15,71 +16,46 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'ap/vim-css-color'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'edkolev/tmuxline.vim'
-Plug 'HerringtonDarkholme/yats.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'stsewd/fzf-checkout.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 call plug#end()
-
-" ############################## PYTHON ########################################
-
-" Run python code selection on popup bash
-fu PyRun() range
-    echo system('python -c ' . shellescape(join(getline(a:firstline, a:lastline), "\n")))
-endf
-noremap <S-L> :call PyRun()<CR>
-
-fu JSRun() range
-    echo system('node -p ' . shellescape(join(getline(a:firstline, a:lastline), "\n")))
-endf
-noremap <S-T> :call JSRun()<CR>
 
 " Highlights
 let python_highlight_all=1
+
+" Page Nav
+map <Leader><Up> <C-U>
+map <Leader><Down> <C-D>
 
 " ################################ JS #########################################
 
 " Insert semicolon at the end on <Leader>;
 inoremap <leader>; <C-o>A;
 
-" ################################ C ###########################################
-map <leader>o :!gcc % -o builds/%< ; ./builds/%< <CR>
-
 " Emmet custom leader key
 let g:user_emmet_leader_key=','
 
-" Folding code
+" ############################### Folding code ###############################
+
 " zf to fold, zo unfold
-set foldmethod=manual
-
-" Page Nav
-map <Leader><Up> <C-U>
-map <Leader><Down> <C-D>
-
-" Clipboard stuff
-noremap <Leader>c "+y
-noremap <Leader>v "+p
-set clipboard=unnamedplus
+noremap <Leader>f vipzf
 
 " ############################## FZF ###############################################
 
 nnoremap <silent> <Space>f :Files<CR>
 nnoremap <silent> <Space>w :Ag<CR>
+nnoremap <silent> <Space>s :Snippets<CR>
+nnoremap <silent> <Space>c :Commits<CR>
 
 let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
-
 let $FZF_DEFAULT_OPTS='--reverse'
-let $BAT_THEME='base16'
 
 nnoremap <Space>g :GBranches<CR>
 
 " ############################## AIRLINE/TMUX ######################################
 
-" Airline stuff
 " For tmuxline + vim-airline integration
 let g:airline#extensions#tmuxline#enabled = 1
 " Start tmuxline even without vim running
@@ -101,37 +77,8 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors
 
-" ############################# SNIPPETS ###########################################
-" Use <C-l> for trigger snippet expand.
-imap <C-l> <Plug>(coc-snippets-expand)
 
-" Use <C-j> for select text for visual placeholder of snippet.
-vmap <C-j> <Plug>(coc-snippets-select)
-
-" Use <C-j> for jump to next placeholder, it's default of coc.nvim
-let g:coc_snippet_next = '<c-j>'
-
-" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-let g:coc_snippet_prev = '<c-k>'
-
-" Use <C-j> for both expand and jump (make expand higher priority.)
-imap <C-j> <Plug>(coc-snippets-expand-jump)
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? coc#_select_confirm() :
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-let g:coc_snippet_next = '<tab>'
-
-
-" ############################## AUTOCOMPLETION #####################################
+" ############################## COC #####################################
 " TextEdit might fail if hidden is not set.
 set hidden
 
@@ -163,9 +110,6 @@ function! s:check_back_space() abort
     let col = col('.') - 1
     return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
@@ -200,60 +144,13 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
-
-" Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-augroup mygroup
-    autocmd!
-    " Setup formatexpr specified filetype(s).
-    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-    " Update signature help on jump placeholder.
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying codeAction to the current line.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-xmap if <Plug>(coc-funcobj-i)
-omap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap af <Plug>(coc-funcobj-a)
-xmap ic <Plug>(coc-classobj-i)
-omap ic <Plug>(coc-classobj-i)
-xmap ac <Plug>(coc-classobj-a)
-omap ac <Plug>(coc-classobj-a)
-
-" Use CTRL-S for selections ranges.
-" Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
-
-" Add `:Format` command to format current buffer.
-command! -nargs=0 Format :call CocAction('format')
-
-" Add `:Fold` command to fold current buffer.
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" Add `:OR` command for organize imports of the current buffer.
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+" Renaming
+nmap <leader>rr <Plug>(coc-rename)
 
 " Add (Neo)Vim's native statusline support.
 " NOTE: Please see `:h coc-status` for integrations with external plugins that
 " provide custom statusline: lightline.vim, vim-airline.
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}%{ObsessionStatus()} 
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 let g:airline#extensions#coc#enabled = 1
 
 " Mappings using CoCList:
@@ -262,45 +159,39 @@ nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 " Manage extensions.
 nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
 " Show commands.
-nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+" nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
 " Find symbol of current document.
 nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
 " Search workspace symbols.
-nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
 nnoremap <silent> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
-" Renaming
-nmap <leader>rr <Plug>(coc-rename)
 
 " Status line integration
 set statusline^=%{coc#status()}
 
 " Coc python correctly resolve root project directory
-autocmd FileType python let b:coc_root_patterns = ['*.pythonenv']
-
-
-"Prettier setup
-command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
-let g:prettier#autoformat_require_pragma = 0
+autocmd FileType python let b:coc_root_patterns = ['Pipfile']
 
 " ###################################################################################
 " Don't deselect after identing
 vnoremap < <gv
 vnoremap > >gv
 
-" Tmux rename
-augroup tmux
-  autocmd!
-  if exists('$TMUX')
-    autocmd BufReadPost,FileReadPost,BufNewFile,FocusGained * call system("tmux rename-window " . expand("%:t"))
-    autocmd VimLeave,FocusLost * call system("tmux set-window-option automatic-rename")
-  endif
-augroup END
+" Remember last cursor position
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 
+" Tmux rename
+if exists('$TMUX')
+  autocmd BufEnter,FocusGained * call system("tmux rename-window " . expand("%:t"))
+  autocmd VimLeave * call system("tmux rename-window zsh")
+endif
 
 " Settings
 set nocompatible
@@ -309,14 +200,16 @@ set encoding=utf-8
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
-set textwidth=85
+set textwidth=80
 set expandtab
 set autoindent
 set fileformat=unix
 set mouse=a
 set nomodeline
 set background=dark
+set clipboard=unnamedplus
 set autoread
+set cursorline
 
 syntax on
 colorscheme gruvbox
