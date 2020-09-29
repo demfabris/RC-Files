@@ -1,24 +1,20 @@
 call plug#begin('~/.vim/plugged')
-
-" Plugin list
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'maxmellon/vim-jsx-pretty'
 Plug 'nvie/vim-flake8'
-Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-commentary'
-Plug 'airblade/vim-rooter'
 Plug 'tpope/vim-fugitive'
-Plug 'sheerun/vim-polyglot'
 Plug 'mattn/emmet-vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'styled-components/vim-styled-components', { 'branch': 'develop' }
 Plug 'morhetz/gruvbox'
 Plug 'jiangmiao/auto-pairs'
-Plug 'ap/vim-css-color'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'edkolev/tmuxline.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'stsewd/fzf-checkout.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
 
@@ -39,7 +35,7 @@ let g:user_emmet_leader_key=','
 
 " ############################### Folding code ###############################
 
-" zf to fold, zo unfold
+" Leader + f to fold, zo unfold
 noremap <Leader>f vipzf
 
 " ############################## FZF ###############################################
@@ -58,11 +54,16 @@ nnoremap <Space>g :GBranches<CR>
 
 " For tmuxline + vim-airline integration
 let g:airline#extensions#tmuxline#enabled = 1
+
 " Start tmuxline even without vim running
 let airline#extensions#tmuxline#snapshot_file = "~/.tmux-status.conf"
+
 " Airline theme
 let g:airline_theme='gruvbox'
 let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#fnamode=':t'
+
 " Tmuxline layout
 let g:tmuxline_preset = {
       \'a'    : [' #S'],
@@ -88,7 +89,7 @@ set nowritebackup
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=100
+set updatetime=500
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -96,20 +97,6 @@ set shortmess+=c
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
 set signcolumn=yes
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-            \ pumvisible() ? "\<C-n>" :
-            \ <SID>check_back_space() ? "\<TAB>" :
-            \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
@@ -123,6 +110,9 @@ endif
 " Use `[g` and `]g` to navigate diagnostics
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Code Action
+nmap <leader>do <Plug>(coc-codeaction)
 
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
@@ -171,9 +161,6 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
-" Status line integration
-set statusline^=%{coc#status()}
-
 " Coc python correctly resolve root project directory
 autocmd FileType python let b:coc_root_patterns = ['Pipfile']
 
@@ -193,6 +180,13 @@ if exists('$TMUX')
   autocmd VimLeave * call system("tmux rename-window zsh")
 endif
 
+" Gruvbox
+let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_italic='1'
+
+" Fix syntax highlighting for large files
+autocmd BufEnter * syntax sync fromstart
+
 " Settings
 set nocompatible
 set number
@@ -207,9 +201,10 @@ set fileformat=unix
 set mouse=a
 set nomodeline
 set background=dark
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 set autoread
 set cursorline
 
 syntax on
+syntax sync fromstart
 colorscheme gruvbox

@@ -33,6 +33,9 @@ COMPLETION_WAITING_DOTS="true"
 # Disable marking untracked files under VCS as dirty. 
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# DOTNET DEV
+export ASPNETCORE_ENVIRONMENT=development
+
 ###### Plugins
 plugins=(git pipenv)
 
@@ -64,7 +67,6 @@ HISTFILE=~/.config/zsh/histfile
 alias autoremove="sudo pacman -Rsn $(pacman -Qdtq)";
 alias trab="cd ~/Documents/Projects/Development ; ll";
 alias tst="cd ~/Documents/Projects/Testing ; ll"; 
-
 
 # Show all available colors
 function term256colors () {

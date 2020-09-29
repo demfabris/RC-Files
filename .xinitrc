@@ -8,3 +8,6 @@ setxkbmap -model abnt2 -layout br -variant abnt2
 while :; do
 	ssh-agent dwm
 done
+
+#sxhkd &
+#exec bspwm
