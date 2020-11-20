@@ -33,11 +33,8 @@ COMPLETION_WAITING_DOTS="true"
 # Disable marking untracked files under VCS as dirty. 
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-# DOTNET DEV
-export ASPNETCORE_ENVIRONMENT=development
-
 ###### Plugins
-plugins=(git pipenv)
+plugins=(git pipenv fzf-tab)
 
 # Oh my zush
 source $ZSH/oh-my-zsh.sh
@@ -46,7 +43,7 @@ source $ZSH/oh-my-zsh.sh
 #
 export LANG=pt_BR.UTF-8
 export EDITOR=nvim
-export BROWSER=google-chrome-stable
+export BROWSER=firefox-developer-edition
 alias vim="nvim"
 
 autoload -U compinit
@@ -65,15 +62,6 @@ HISTFILE=~/.config/zsh/histfile
 
 # Cool aliases
 alias autoremove="sudo pacman -Rsn $(pacman -Qdtq)";
-alias trab="cd ~/Documents/Projects/Development ; ll";
-alias tst="cd ~/Documents/Projects/Testing ; ll"; 
-
-# Show all available colors
-function term256colors () {
-  for i in {0..255}
-    do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}
-  done
-} 
 
 # Git aliases
 alias gl="git log --oneline --decorate --graph --all"
@@ -81,20 +69,13 @@ alias gb="git branch -av"
 alias gs="git status"
 alias gc="git commit --verbose -m $1"
 
-export myrepo="https://github.com/fabricio7p/"
-
-function fetch_repo () {
-    [ -z $1 ] && echo "Usage: fetch_repo <repository_name>" && return
-    echo $(git clone $myrepo$1.git $inplace)
-}
-
 # Navigation aliases
 alias ..='cd ..'
 alias .2='cd ../..'
 alias .3='cd ../../..'
 alias .4='cd ../../../..'
 
-# Some more ls aliases
+# ls aliases
 alias ll='lsd -lAhS --blocks permission,group,size,date,name  --date relative --group-dirs first'
 alias l='lsd -lSh --group-dirs first'
 
@@ -103,17 +84,31 @@ if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors/DIR_COLORS)" || eval "$(dircolors -b)"
 fi
 
-
 # Syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# 2>/dev/null
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
 
-# fzf key bindings
+# FZF
+# keybindings
 source /usr/share/fzf/key-bindings.zsh
-# export FZF_DEFAULT_COMMAND=ag
 source /usr/share/fzf/completion.zsh
 
+# NNN Configs
+[[ -a $XDG_CONFIG_HOME/nnn/config.sh ]] && source $XDG_CONFIG_HOME/nnn/config.sh
 
+# Gruvbox colorscheme
+export FZF_DEFAULT_OPTS='
+  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
+'
+export FZF_CTRL_T_COMMAND='ag --hidden --ignore .git --ignore node_modules --ignore Library -g "" 2> /dev/null'
+
+export FZF_ALT_C_COMMAND="find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' -o -name node_modules \\) -prune \
+    -o -type d -print 2> /dev/null | cut -b3-"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+# Source goto
+[[ -s "/usr/local/share/goto.sh" ]] && source /usr/local/share/goto.sh
+

@@ -1,4 +1,5 @@
 call plug#begin('~/.vim/plugged')
+Plug 'airblade/vim-rooter'
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'nvie/vim-flake8'
@@ -40,15 +41,18 @@ noremap <Leader>f vipzf
 
 " ############################## FZF ###############################################
 
-nnoremap <silent> <Space>f :Files<CR>
+nnoremap <silent> <Space>f :GFiles<CR>
 nnoremap <silent> <Space>w :Ag<CR>
 nnoremap <silent> <Space>s :Snippets<CR>
 nnoremap <silent> <Space>c :Commits<CR>
 
-let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
+let g:fzf_layout = { 'window': { 'width': 0.85, 'height': 0.85 } }
 let $FZF_DEFAULT_OPTS='--reverse'
 
 nnoremap <Space>g :GBranches<CR>
+
+" Vim Rooter
+let g:rooter_patterns = ['package.json', '.git']
 
 " ############################## AIRLINE/TMUX ######################################
 
@@ -76,8 +80,12 @@ let g:tmuxline_preset = {
 " Tmux color stuff
 let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-set termguicolors
 
+" Tmux Italics
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+
+set termguicolors
 
 " ############################## COC #####################################
 " TextEdit might fail if hidden is not set.
@@ -165,9 +173,15 @@ nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 autocmd FileType python let b:coc_root_patterns = ['Pipfile']
 
 " ###################################################################################
+" 
 " Don't deselect after identing
 vnoremap < <gv
 vnoremap > >gv
+
+" Buffer cycling
+nnoremap <silent> <C-Right> :bnext<CR>
+nnoremap <silent> <C-Left>  :bprevious<CR>
+nnoremap <silent> <C-]>    :bdelete<CR>
 
 " Remember last cursor position
 if has("autocmd")
@@ -181,7 +195,6 @@ if exists('$TMUX')
 endif
 
 " Gruvbox
-let g:gruvbox_contrast_dark='hard'
 let g:gruvbox_italic='1'
 
 " Fix syntax highlighting for large files
